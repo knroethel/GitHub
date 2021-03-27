@@ -1,14 +1,16 @@
 // Kirsten Roethel
 // Team Bee
 
-// Mod 1: Changed the grid size to 8 x 1
+// Mod 1: Changed the grid size to 8 x 2
 // Mod 2: Changed the status line to "Play A Song!"
 // Mod 3: Changed the status color to black
 // Mod 4: Changed grid background to baby blue
 // Mod 5: Changed the borders to black
 // Mod 6: Removed borders on the perimeter of the grid
-// Mod 7: Made the beads turn black when clicked, turning white again when released (Removed toggle)
-// Mod 8: Added different piano keys to each bead
+// Mod 7: Changed borders to look like piano keys
+// Mod 8: Made the beads turn black when clicked, turning white again when released (Removed toggle)
+// Mod 9: Added different piano key sounds to each bead
+// Mod 10: Made more than one bead turn black when clicked
 
 /*
 game.js for Perlenspiel 3.3.x
@@ -29,26 +31,29 @@ Any value returned is ignored.
 [options : Object] = A JavaScript object with optional data properties; see API documentation for details.
 */
 
-PS.init = function( system, options ) {
-
-	// Create color variable for baby blue
+	// Create color variable for baby blue and light grey
 
 	var BABY_BLUE = 0x89cff0;
+	var LIGHT_GREY = 0xd3d3d3;
+
+PS.init = function( system, options ) {
 
 	// Establish grid dimensions
 	
-	PS.gridSize( 8, 1 );
+	PS.gridSize( 8, 2 );
 	
 	// Set background color to baby blue
 
 	PS.gridColor( BABY_BLUE );
 
 	// Removed border on the perimeter of the grid, gave the border in between beads a width of 4 and color black
+	// Makes the grid look like piano keys
 
-	PS.border ( PS.ALL, PS.ALL, { top : 0, bottom : 0, right : 4, left : 4});
-	PS.border ( 0, 0, { left: 0});
-	PS.border ( 7, 0, { right: 0});
-	PS.borderColor ( PS.ALL, PS.ALL, PS.COLOR_BLACK);
+	PS.border ( PS.ALL, 0, { top : 0, bottom : 0, right : 4, left : 4});
+	PS.border ( PS.ALL, 1, { top : 0, Bottom : 0, right : 1, left : 1});
+	PS.border ( 0, PS.ALL, { left: 0});
+	PS.border ( 7, PS.ALL, { right: 0});
+	PS.borderColor ( PS.ALL, PS.ALL, PS.COLOR_BLACK );
 
 	// Change status line color and text
 
@@ -68,14 +73,24 @@ This function doesn't have to do anything. Any value returned is ignored.
 */
 
 PS.touch = function( x, y, data, options ) {
-	// Toggle color of touched bead from white to black when touched
+	// Toggle color of touched bead and the one under/below from white to light grey when touched.
 	// NOTE: The default value of a bead's [data] is 0, which happens to be equal to PS.COLOR_BLACK
 
 	PS.color( x, y, data ); // set color to current value of data
 
-	// Set the bead color to black when touched
+	// Set the bead color to grey when touched
 
-	PS.color( x, y, PS.COLOR_BLACK );
+	PS.color( x, y, LIGHT_GREY );
+
+	// The key above/below is also changed
+
+	if ( y == 1 ) {
+		PS.color( x, 0, LIGHT_GREY );
+	}
+		else{
+			PS.color ( x, 1, LIGHT_GREY );
+		}
+
 
 	// Play piano sounds
 
@@ -148,6 +163,16 @@ PS.release = function( x, y, data, options ) {
 
 	PS.color( x, y, PS.COLOR_WHITE );
 
+	// The key above/below is also changed
+
+	if ( y == 1 ) {
+		PS.color( x, 0, PS.COLOR_WHITE );
+	}
+	else{
+		PS.color ( x, 1, PS.COLOR_WHITE );
+	}
+
+
 	// PS.debug( "PS.release() @ " + x + ", " + y + "\n" );
 
 	// Add code here for when the mouse button/touch is released over a bead.
@@ -201,7 +226,17 @@ PS.exit = function( x, y, data, options ) {
 	// Uncomment the following code line to inspect x/y parameters:
 
 	// Turns the bead white when the mouse exits the bead
+
 	PS.color( x, y, PS.COLOR_WHITE );
+
+	// The key above/below is also changed
+	
+	if ( y == 1 ) {
+		PS.color( x, 0, PS.COLOR_WHITE );
+	}
+	else{
+		PS.color ( x, 1, PS.COLOR_WHITE );
+	}
 
 	// PS.debug( "PS.exit() @ " + x + ", " + y + "\n" );
 
