@@ -189,6 +189,8 @@ const _burst = function ( x, y ) {
 
 PS.init = function( system, options ) {
 
+	const TEAM = "Bee";
+
 	PS.gridSize( 28, 28 );
 	PS.gridColor( PS.COLOR_BLACK );
 
@@ -205,6 +207,14 @@ PS.init = function( system, options ) {
 	PS.audioLoad( SOUND_BURST );
 
 	_idTimer = PS.timerStart( _FPS, _timer ); // start the particle animator
+
+	PS.dbLogin( "imgd2900", TEAM, function ( id, user ) {
+		if ( user === PS.ERROR ) {
+			return PS.dbErase( TEAM );
+		}
+		PS.dbEvent( TEAM, "startup", user );
+		PS.dbSave( TEAM, PS.CURRENT, { discard : true } );
+	}, { active : false } );
 };
 
 PS.touch = function( x, y, data, options ) {
