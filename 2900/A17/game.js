@@ -13,10 +13,13 @@ const _pool = []; // pool of sprites available for re-use
 let _nextPlane = 1; // next assignable sprite plane
 const _particles = []; // list of active particles
 
-const COLOR_BURST = 0x6E1010;
+const NIGHT_SKY = PS.COLOR_BLACK;
 
 const SOUND_SHOOT = "fx_shoot5";
 const SOUND_BURST = "fx_blast3";
+const SOUND_FIZZLE = "fx_shoot7";
+
+
 
 // Call this to create a new particle at x/y with the specified color and alpha (default = opaque)
 
@@ -152,50 +155,68 @@ let _idTimer = ""; // timer ID
 // Create red trails that explode in four diagonals from x, y
 
 const _burst = function ( x, y ) {
-	let len = 4; // length of each burst
+	let len = PS.random( 6 ) + 1; // length of each burst is random
+	let BURST_COLOR = PS.random( PS.COLOR_WHITE )
 
-	PS.audioPlay( SOUND_BURST );
+	if ( y <= 0 ) {
+		PS.audioPlay( SOUND_FIZZLE, {
+			volume: .03,
+		});
 
-	PS.fade( PS.ALL, PS.ALL, 60, { rgb : COLOR_BURST } );
-	PS.gridFade( 60, { rgb : COLOR_BURST } );
+		PS.fade( PS.ALL, PS.ALL, 15, { rgb : PS.COLOR_GRAY_DARK } );
+		PS.gridFade( 15, { rgb : PS.COLOR_GRAY_DARK } );
 
-	PS.gridColor( PS.COLOR_BLACK );
-	PS.color( PS.ALL, PS.ALL, PS.COLOR_BLACK)
+		PS.gridColor( NIGHT_SKY );
+		PS.color( PS.ALL, PS.ALL, NIGHT_SKY );
+	}
+	else
+		{
+			PS.audioPlay( SOUND_BURST, {
+				volume : .03,
+			} );
 
-	let burst1 = _spawn( x, y, PS.COLOR_RED );
-	burst1.add( -len, -len );
-	burst1.add( -1 , 1 );
-	burst1.add( 0 , 1 )
-	burst1.start();
+			PS.fade( PS.ALL, PS.ALL, 60, { rgb : BURST_COLOR } );
+			PS.gridFade( 60, { rgb : BURST_COLOR } );
 
-	let burst2 = _spawn( x, y, PS.COLOR_RED );
-	burst2.add( len, len );
-	burst2.add( 1 , 1 );
-	burst2.add( 0 , 1 );
-	burst2.start();
+			PS.gridColor( NIGHT_SKY );
+			PS.color( PS.ALL, PS.ALL, NIGHT_SKY );
 
-	let burst3 = _spawn( x, y, PS.COLOR_RED );
-	burst3.add( len, -len );
-	burst3.add( 1 , 1 );
-	burst3.add( 0 , 1 );
-	burst3.start();
+			let burst1 = _spawn( x, y,BURST_COLOR );
 
-	let burst4 = _spawn( x, y, PS.COLOR_RED );
-	burst4.add( -len, len );
-	burst4.add( -1 , 1 );
-	burst4.add( 0 , 1 );
-	burst4.start();
-}
+			burst1.add(-PS.random( 6 ) + 1, -PS.random( 6 ) + 1);
+			burst1.add(-1, 1);
+			burst1.add(0, 1)
+			burst1.start();
+
+			let burst2 = _spawn(x, y, BURST_COLOR );
+			burst2.add(PS.random( 6 ) + 1, PS.random( 6 ) + 1);
+			burst2.add(1, 1);
+			burst2.add(0, 1);
+			burst2.start();
+
+			let burst3 = _spawn(x, y, BURST_COLOR );
+			burst3.add(PS.random( 6 ) + 1, -PS.random( 6 ) + 1);
+			burst3.add(1, 1);
+			burst3.add(0, 1);
+			burst3.start();
+
+			let burst4 = _spawn(x, y, BURST_COLOR );
+			burst4.add(-PS.random( 6 ) + 1, PS.random( 6 ) + 1);
+			burst4.add(-1, 1);
+			burst4.add(0, 1);
+			burst4.start();
+
+		};
+	
+};
 
 PS.init = function( system, options ) {
 
-	const TEAM = "Bee";
-
-	PS.gridSize( 28, 28 );
-	PS.gridColor( PS.COLOR_BLACK );
+	PS.gridSize( 32, 32 );
+	PS.gridColor( NIGHT_SKY );
 
 
-	PS.color( PS.ALL, PS.ALL, PS.COLOR_BLACK );
+	PS.color( PS.ALL, PS.ALL, NIGHT_SKY );
 	PS.border( PS.ALL, PS.ALL, 0 );
 
 
@@ -205,24 +226,22 @@ PS.init = function( system, options ) {
 
 	PS.audioLoad( SOUND_SHOOT );
 	PS.audioLoad( SOUND_BURST );
+	PS.audioLoad( SOUND_FIZZLE );
 
 	_idTimer = PS.timerStart( _FPS, _timer ); // start the particle animator
-
-	// PS.dbLogin( "imgd2900", TEAM, function ( id, user ) {
-	// 	if ( user === PS.ERROR ) {
-	// 		return;
-	// 	}
-	//	PS.dbEvent( TEAM, "startup", user );
-	// 	PS.dbSend( TEAM, PS.CURRENT, { discard : true } );
-	// }, { active : false } );
 };
 
 PS.touch = function( x, y, data, options ) {
-	let rocket = _spawn( x, y, PS.COLOR_RED ); // create a new rocket at touch point
+	let FIREWORK_COLOR = PS.random( PS.COLOR_WHITE );
+	let rocket = _spawn( x, y, FIREWORK_COLOR ); // create a new rocket at touch point
 
-	rocket.add( 0, -8, _burst ); // add a target 8 beads above it that bursts at the end
+	let flight_time = PS.random( 10 ) + 2;
 
-	PS.audioPlay( SOUND_SHOOT );
+	rocket.add( 0, -( flight_time ), _burst ); // add a target a random number of beads above it that bursts at the end
+
+	PS.audioPlay( SOUND_SHOOT, {
+		volume : .03,
+	} );
 
 	// Comment out the line above
 	// Then uncomment the following 4 lines and re-run
