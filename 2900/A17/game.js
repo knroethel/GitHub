@@ -206,6 +206,23 @@ const _burst = function ( x, y ) {
 			burst4.add(0, 1);
 			burst4.start();
 
+			if ( PS.random( 2 ) === 1 ) {
+				let burst5 = _spawn(x, y, BURST_COLOR);
+				burst5.add(-PS.random(6) + 1, 0);
+				burst5.add(-1, 1);
+				burst5.add(0, 1);
+				burst5.start();
+
+				let burst6 = _spawn(x, y, BURST_COLOR);
+				burst6.add(0, -PS.random(6) + 1);
+				burst6.add(1, -1);
+				burst6.add(0, 1);
+				burst6.start();
+			}
+			else{
+				return;
+			}
+
 		};
 	
 };
