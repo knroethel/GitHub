@@ -413,7 +413,7 @@ const G = ( function () {
 			_rgb_canvas = PS.unmakeRGB( COLOR_CANVAS, {} );
 
 			// Timer
-			hint_time = PS.timerStart( 60, give_hint );
+			// hint_time = PS.timerStart( 60, give_hint );
 
 
 			_next_level(); // set up first level
