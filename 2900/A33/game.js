@@ -363,7 +363,7 @@ const G = ( function () {
 				}
 				PS.dbEvent(TEAM, "startup", user);
 				PS.dbSend(TEAM, PS.CURRENT, {discard: true});
-			}, {active: false});
+			}, {active: true});
 
 			// Change the false in the final line above to true
 			// before deploying the code to your Web site.
