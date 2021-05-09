@@ -465,6 +465,8 @@ const G = ( function () {
 		PS.gridSize( _grid_x, _grid_y );
 		PS.gridColor( BACKGROUND_COLOR );
 
+		PS.fade( PS.ALL, PS.ALL, 10 );
+
 		PS.border( PS.ALL, PS.ALL, 0 );
 		PS.borderColor( PS.ALL, PS.ALL, PS.COLOR_BLACK );
 

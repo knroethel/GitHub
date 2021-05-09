@@ -382,6 +382,7 @@ const G = ( function () {
 			}
 
 
+
 			switch ( key ) {
 				case PS.KEY_ARROW_UP:
 				case 119:
